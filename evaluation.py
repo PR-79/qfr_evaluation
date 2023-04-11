@@ -36,10 +36,12 @@ class Evaluation:
                     print(f"----------------{i}/{num_combs} name: {benchname}, size: {nqbit}, label: {arg['label']}----------------")
                 try:
                     i+=1
-                    results = qfr.construct(qc, store_dd=arg['store_dd'], store_matrix=arg['store_matrix'], reduceT=arg['reduceT'])
+                    results = qfr.construct(qc, store_dd=arg['store_dd'], store_matrix=arg['store_matrix'], reductionType=arg['reductionType'])
                     
                     if check_equality:
                         mat = results['functionality']['matrix']
+                        # if i==2:
+                        #     mat[0] = 5000
                         if not mat in mats:
                             mats.append(mat)
 
@@ -78,7 +80,7 @@ class Evaluation:
 
 
 
-qbit_interval = range(3,7)
+qbit_interval = range(3,10)
 
 scalable_benchmarks = ["ae", "dj", "grover-noancilla", "grover-v-chain", "ghz",
                         "graphstate", "portfolioqaoa", "portfoliovqe", "qaoa", "qft",
@@ -86,13 +88,18 @@ scalable_benchmarks = ["ae", "dj", "grover-noancilla", "grover-v-chain", "ghz",
                             "qwalk-v-chain", "realamprandom", "su2random", "twolocalrandom",
                               "vqe", "wstate"]
 
-params = [{'label': 'regular', 'store_dd': False, 'store_matrix': False, 'reduceT': False},
-          {'label': 'reduceT', 'store_dd': False, 'store_matrix': False, 'reduceT': True}]
+params = [{'label': 'regular', 'store_dd': False, 'store_matrix': False, 'reductionType': 0},
+          {'label': 'reduceT', 'store_dd': False, 'store_matrix': False, 'reductionType': 1}]
 
-params2 = [{'label': 'regular', 'store_dd': False, 'store_matrix': True, 'reduceT': False},
-          {'label': 'reduceT', 'store_dd': False, 'store_matrix': True, 'reduceT': True}]
+params2 = [{'label': 'regular', 'store_dd': False, 'store_matrix': False, 'reductionType': 0},
+          {'label': 'reduceCT', 'store_dd': False, 'store_matrix': False, 'reductionType': 2}]
 
-QFR_Eval = Evaluation(['grover-v-chain'], qbit_interval, params2, verbose=True)
+params3 = [{'label': 'regular', 'store_dd': False, 'store_matrix': False, 'reductionType': 0},
+          {'label': 'reduceX', 'store_dd': False, 'store_matrix': False, 'reductionType': 3}]
+
+# QFR_Eval = Evaluation(scalable_benchmarks, qbit_interval, params3, verbose=True)
+QFR_Eval = Evaluation(['qpeexact'], qbit_interval, params3, verbose=True)
+
 
 QFR_Eval.run_evaluation(check_equality=False)
 
@@ -119,12 +126,12 @@ QFR_Eval.export_to_excel("test/evaluation/excel/")
 #                 print("----------------test {} with circuit size {}----------------".format(benchname, nqbit))
 
         
-#             resultsN = qfr.construct(qc, store_dd=False, store_matrix=False, reduceT=False)
+#             resultsN = qfr.construct(qc, store_dd=False, store_matrix=False, reductionType=False)
 #             numNodesN = resultsN['statistics']['final_nodecount']
 #             # matN = resultsN['functionality']['matrix']
 #             # ddN = resultsN['functionality']['dd']
 
-#             resultsT = qfr.construct(qc, store_dd=False, store_matrix=False, reduceT=True)
+#             resultsT = qfr.construct(qc, store_dd=False, store_matrix=False, reductionType=True)
 #             numNodesT = resultsT['statistics']['final_nodecount']
 #             # matT = resultsT['functionality']['matrix']
 #             # ddT = resultsT['functionality']['dd']
